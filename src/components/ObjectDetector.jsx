@@ -4,7 +4,7 @@ import * as cocoSsd from '@tensorflow-models/coco-ssd'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Upload, Scan, Loader2, Sparkles, Image as ImageIcon, 
-  RotateCcw, SlidersHorizontal, Eye, EyeOff, Activity, Box
+  RotateCcw, SlidersHorizontal, Eye, EyeOff, Activity, Box, Camera
 } from 'lucide-react'
 
 // Color palette for consistent class coloring
@@ -43,6 +43,7 @@ const ObjectDetector = () => {
 
   const imageRef = useRef(null)
   const fileInputRef = useRef(null)
+  const cameraInputRef = useRef(null)
 
   useEffect(() => {
     const loadModel = async () => {
@@ -170,26 +171,50 @@ const ObjectDetector = () => {
       ) : (
         <div className="flex flex-col gap-8 w-full">
           {!imageSrc ? (
-            <motion.div 
-              whileHover={{ scale: 0.995, y: -2 }}
-              onClick={() => fileInputRef.current?.click()}
-              className="border-2 border-dashed border-border rounded-3xl p-12 md:p-20 text-center cursor-pointer transition-all duration-400 hover:border-primary hover:bg-primary/5 hover:shadow-[inset_0_0_40px_rgba(255,51,102,0.05)]"
-            >
-              <div className="flex justify-center mb-6">
-                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-[0_0_20px_var(--color-primary-glow)]">
-                  <Upload size={32} color="white" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+              <motion.div 
+                whileHover={{ scale: 0.995, y: -2 }}
+                onClick={() => fileInputRef.current?.click()}
+                className="border-2 border-dashed border-border rounded-3xl p-10 md:p-16 text-center cursor-pointer transition-all duration-400 hover:border-primary hover:bg-primary/5 hover:shadow-[inset_0_0_40px_rgba(255,51,102,0.05)]"
+              >
+                <div className="flex justify-center mb-6">
+                  <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-[0_0_20px_var(--color-primary-glow)]">
+                    <Upload size={32} color="white" />
+                  </div>
                 </div>
-              </div>
-              <h3 className="text-2xl md:text-3xl font-extrabold mb-3">Input Visual Artifact</h3>
-              <p className="text-text-muted text-base md:text-lg">Drag image or click to browse local storage</p>
-              <input 
-                type="file" 
-                className="hidden" 
-                onChange={handleImageUpload} 
-                ref={fileInputRef}
-                accept="image/*"
-              />
-            </motion.div>
+                <h3 className="text-xl md:text-2xl font-extrabold mb-3">Upload File</h3>
+                <p className="text-text-muted text-sm md:text-base">Browse your local storage</p>
+                <input 
+                  type="file" 
+                  className="hidden" 
+                  onChange={handleImageUpload} 
+                  ref={fileInputRef}
+                  accept="image/*"
+                />
+              </motion.div>
+
+              <motion.div 
+                whileHover={{ scale: 0.995, y: -2 }}
+                onClick={() => cameraInputRef.current?.click()}
+                className="border-2 border-dashed border-border rounded-3xl p-10 md:p-16 text-center cursor-pointer transition-all duration-400 hover:border-emerald-500 hover:bg-emerald-500/5 hover:shadow-[inset_0_0_40px_rgba(16,185,129,0.05)]"
+              >
+                <div className="flex justify-center mb-6">
+                  <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-400 flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.4)]">
+                    <Camera size={32} color="white" />
+                  </div>
+                </div>
+                <h3 className="text-xl md:text-2xl font-extrabold mb-3">Capture Photo</h3>
+                <p className="text-text-muted text-sm md:text-base">Use your device camera</p>
+                <input 
+                  type="file" 
+                  className="hidden" 
+                  onChange={handleImageUpload} 
+                  ref={cameraInputRef}
+                  accept="image/*"
+                  capture="environment"
+                />
+              </motion.div>
+            </div>
           ) : (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col gap-6 w-full">
               
