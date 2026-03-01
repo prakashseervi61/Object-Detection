@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 function App() {
   return (
-    <Router>
+    <Router basename={import.meta.env.BASE_URL}>
       <div className="container-full flex flex-col min-h-screen">
         <Navbar />
         
