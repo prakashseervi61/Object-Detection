@@ -69,14 +69,14 @@ const ObjectDetector = () => {
   const handleImageUpload = (e) => {
     const file = e.target.files[0]
     if (file) {
-      const reader = new FileReader()
-      reader.onload = (event) => {
-        setImageSrc(event.target.result)
-        setRawPredictions([])
-        setInferenceTime(null)
-        setHasScanned(false)
+      if (imageSrc) {
+        URL.revokeObjectURL(imageSrc) // free up memory
       }
-      reader.readAsDataURL(file)
+      const imageUrl = URL.createObjectURL(file)
+      setImageSrc(imageUrl)
+      setRawPredictions([])
+      setInferenceTime(null)
+      setHasScanned(false)
     }
   }
 
@@ -120,20 +120,10 @@ const ObjectDetector = () => {
     await new Promise(r => setTimeout(r, 600));
     
     try {
-      // Create a pure off-screen image to ensure CSS layout resizing doesn't skew the AI coordinate matrix
-      const scanImage = new Image();
-      scanImage.crossOrigin = "anonymous";
-      scanImage.src = imageSrc;
-      
-      await new Promise((resolve, reject) => {
-        scanImage.onload = resolve;
-        scanImage.onerror = reject;
-      });
-
-      console.log(`Scanning pure image at intrinsic resolution: ${scanImage.width}x${scanImage.height}`);
+      console.log(`Scanning image at intrinsic resolution: ${imageRef.current.naturalWidth}x${imageRef.current.naturalHeight}`);
       
       const start = performance.now();
-      const results = await model.detect(scanImage);
+      const results = await model.detect(imageRef.current);
       const end = performance.now();
       
       console.log("TF.js Detection Success!");
@@ -262,7 +252,6 @@ const ObjectDetector = () => {
                     ref={imageRef} 
                     src={imageSrc} 
                     onLoad={handleImageLoad}
-                    crossOrigin="anonymous"
                     className="block w-auto h-auto max-w-full max-h-[70vh] rounded-xl"
                     alt="Source"
                   />
