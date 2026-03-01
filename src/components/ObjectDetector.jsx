@@ -129,18 +129,55 @@ const ObjectDetector = () => {
         scanImage.onerror = reject;
       });
 
-      console.log(`Scanning image at intrinsic resolution: ${scanImage.width}x${scanImage.height}`);
+      // Mobile devices crash when feeding 12MP+ photos directly into tf.browser.fromPixels.
+      // We must scale down the image safely via Canvas before giving it to TensorFlow.
+      const MAX_DIMENSION = 1000;
+      let targetWidth = scanImage.width;
+      let targetHeight = scanImage.height;
+
+      if (targetWidth > MAX_DIMENSION || targetHeight > MAX_DIMENSION) {
+        if (targetWidth > targetHeight) {
+          targetHeight = Math.round((targetHeight * MAX_DIMENSION) / targetWidth);
+          targetWidth = MAX_DIMENSION;
+        } else {
+          targetWidth = Math.round((targetWidth * MAX_DIMENSION) / targetHeight);
+          targetHeight = MAX_DIMENSION;
+        }
+      }
+
+      const canvas = document.createElement('canvas');
+      canvas.width = targetWidth;
+      canvas.height = targetHeight;
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      ctx.drawImage(scanImage, 0, 0, targetWidth, targetHeight);
+
+      console.log(`Scanning image rescaled to: ${targetWidth}x${targetHeight}`);
       
       const start = performance.now();
-      const results = await model.detect(scanImage);
+      const results = await model.detect(canvas);
       const end = performance.now();
       
+      // The results are based on the downscaled canvas. 
+      // We must multiply the bounding box coordinates back to the original image dimensions.
+      const scaleX = scanImage.width / targetWidth;
+      const scaleY = scanImage.height / targetHeight;
+
+      const restoredResults = results.map(p => ({
+        ...p,
+        bbox: [
+          p.bbox[0] * scaleX,
+          p.bbox[1] * scaleY,
+          p.bbox[2] * scaleX,
+          p.bbox[3] * scaleY
+        ]
+      }));
+
       console.log("TF.js Detection Success!");
-      console.log("Raw Predictions Array:", results);
+      console.log("Raw Predictions Array:", restoredResults);
       console.log(`Inference took: ${(end - start).toFixed(1)}ms`);
       
       setInferenceTime((end - start).toFixed(1));
-      setRawPredictions(results);
+      setRawPredictions(restoredResults);
       setHasScanned(true);
     } catch (err) {
       console.error("CRITICAL RUNTIME ERROR during model.detect():", err);
