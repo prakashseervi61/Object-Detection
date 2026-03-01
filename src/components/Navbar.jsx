@@ -41,7 +41,7 @@ const Navbar = () => {
       </div>
 
       <div className="flex gap-4 items-center min-w-fit order-2 md:order-3">
-        <a href="https://github.com" target="_blank" rel="noreferrer" className="text-text-muted/50 transition-colors hover:text-white hidden sm:block">
+        <a href="https://github.com/prakashseervi61/Object-Detection" target="_blank" rel="noreferrer" className="text-text-muted/50 transition-colors hover:text-white hidden sm:block">
           <Github size={18} />
         </a>
         <Link 
