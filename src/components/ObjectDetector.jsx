@@ -120,10 +120,19 @@ const ObjectDetector = () => {
     await new Promise(r => setTimeout(r, 600));
     
     try {
-      console.log(`Scanning image at intrinsic resolution: ${imageRef.current.naturalWidth}x${imageRef.current.naturalHeight}`);
+      // Create a pure off-screen image to ensure CSS layout resizing doesn't skew the AI coordinate matrix
+      const scanImage = new Image();
+      scanImage.src = imageSrc;
+      
+      await new Promise((resolve, reject) => {
+        scanImage.onload = resolve;
+        scanImage.onerror = reject;
+      });
+
+      console.log(`Scanning image at intrinsic resolution: ${scanImage.width}x${scanImage.height}`);
       
       const start = performance.now();
-      const results = await model.detect(imageRef.current);
+      const results = await model.detect(scanImage);
       const end = performance.now();
       
       console.log("TF.js Detection Success!");
