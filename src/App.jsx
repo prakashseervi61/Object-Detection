@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Detector from './pages/Detector';
@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 function App() {
   return (
-    <Router basename={import.meta.env.BASE_URL}>
+    <Router>
       <div className="container-full flex flex-col min-h-screen">
         <Navbar />
         
