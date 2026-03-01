@@ -169,7 +169,6 @@ const Home = () => {
                </div>
                <span className="font-black tracking-widest text-[1.1rem]">AI VISION</span>
             </div>
-            <p className="text-text-muted text-[0.85rem]">© 2026 Neural Engine Research Lab. All rights reserved.</p>
          </div>
       </footer>
     </div>
