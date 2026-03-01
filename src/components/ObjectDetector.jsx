@@ -157,7 +157,7 @@ const ObjectDetector = () => {
   return (
     <div className="bg-surface backdrop-blur-xl border border-border rounded-3xl p-6 md:p-12 shadow-2xl transition-all duration-400">
       {isLoading ? (
-        <div className="flex flex-col items-center py-24 gap-6">
+        <div className="flex flex-col items-center py-24 gap-6 min-h-[50vh] justify-center">
           <div className="relative">
              <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full"></div>
              <Loader2 className="animate-spin relative z-10 text-primary" size={64} />
